@@ -38,14 +38,28 @@ fortune_menu() {
     read fortune_choice
 
     case $fortune_choice in
-        1) cat love.txt | shuf -n 1 ;;
-        2) cat developer.txt | shuf -n 1 ;;
-        3) cat wealth.txt | shuf -n 1 ;;
-        4) cat relationships.txt | shuf -n 1 ;;
-        5) cat health.txt | shuf -n 1 ;;
-        6) zodiac_fortune ;;
-        *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; fortune_menu ;;
-    esac
+        1)
+            echo "$user_name 님! 오늘의 연애 운세를 말씀드릴게요!"
+            cat love.txt | shuf -n 1 ;;
+        2)
+            echo "$user_name 님! 오늘의 개발 운세를 말씀드릴게요!"
+            cat developer.txt | shuf -n 1 ;;
+        3)
+            echo "$user_name 님! 오늘의 금전운을 말씀드릴게요!"
+            cat wealth.txt | shuf -n 1 ;;
+        4)
+            echo "$user_name 님! 오늘의 인간관계 운세를 말씀드릴게요!"
+            cat relationships.txt | shuf -n 1 ;;
+        5)
+            echo "$user_name 님! 오늘의 건강 운세를 말씀드릴게요!"
+            cat health.txt | shuf -n 1 ;;
+        6)
+            echo "$user_name 님! 오늘의 별자리 운세를 말씀드릴게요!"
+            zodiac_fortune ;;
+        *)
+            echo "잘못된 옵션입니다. 다시 시도해 주세요."
+            fortune_menu ;;
+    esac  # 이 부분이 누락되어 있었음
 }
 
 # 조언 카테고리
@@ -56,17 +70,16 @@ advice_menu() {
     read advice_choice
 
     case $advice_choice in
-        1) developer_advice ;;  
+        1) developer_advice ;;
         *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; advice_menu ;;
     esac
 }
 
-# 개발 관련 조언 
+# 개발 관련 조언
 developer_advice() {
     random_advice=$(awk -v RS="###" 'BEGIN {srand()} {if (rand() <= 1) print $0}' "$developer_advice_file")
     echo "$random_advice"
 }
-
 
 # 별자리 운세
 zodiac_fortune() {
@@ -75,7 +88,6 @@ zodiac_fortune() {
     echo "생일 일을 입력해 주세요 (1-31):"
     read birth_day
 
-  
     if [[ ($birth_month -eq 3 && $birth_day -ge 21) || ($birth_month -eq 4 && $birth_day -le 19) ]]; then
         zodiac_sign="양자리"
     elif [[ ($birth_month -eq 4 && $birth_day -ge 20) || ($birth_month -eq 5 && $birth_day -le 20) ]]; then
@@ -105,7 +117,7 @@ zodiac_fortune() {
     fi
 
     echo "${user_name}님, 오늘의 ${zodiac_sign} 운세를 말씀드릴게요!"
-    fortune=$(shuf -n 1 "$zodiac_file") 
+    fortune=$(shuf -n 1 "$zodiac_file")
     echo "$fortune"
 }
 
