@@ -71,15 +71,49 @@ advice_menu() {
 
     case $advice_choice in
         1) developer_advice ;;
-        *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; advice_menu ;;
+	2) weather_advice ;;
+	*) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; advice_menu ;;
     esac
 }
 
-# 개발 관련 조언
 developer_advice() {
-    random_advice=$(awk -v RS="###" 'BEGIN {srand()} {if (rand() <= 1) print $0}' "$developer_advice_file")
-    echo "$random_advice"
+    # 제목 파일과 내용 파일 경로 정의
+    title_file="developer_advice.txt"
+    content_file="test_contents.txt"
+
+    # 제목 파일 읽기
+    IFS=$'\n' read -r -d '' -a titles < "$title_file"
+
+    # 제목 목록 출력
+    echo "조언들:"
+    for i in "${!titles[@]}"; do
+        echo "$((i + 1)). ${titles[$i]}"
+    done
+
+    # 사용자 선택 입력
+    echo "원하는 조언의 번호를 선택해 주세요:"
+    read advice_choice
+
+    # 입력 검증 및 상세 내용 출력
+    if [[ "$advice_choice" -lt 1 || "$advice_choice" -gt ${#titles[@]} ]]; then
+        echo "잘못된 선택입니다. 다시 시도해 주세요."
+        developer_advice
+    else
+        echo "— 선택한 조언 —"
+        # 선택한 조언의 내용 출력 (내용 파일에서 동일 인덱스의 내용 가져오기)
+        content=$(awk -v RS="" "NR==$advice_choice" "$content_file")
+        echo "$content"
+    fi
 }
+
+
+
+# 날씨 관련 조언 (임시 기능)
+weather_advice() {
+    echo "날씨 관련 조언은 현재 준비 중입니다."
+}
+
+
 
 # 별자리 운세
 zodiac_fortune() {
