@@ -67,19 +67,21 @@ advice_menu() {
     echo "조언 카테고리:"
     echo "1. 개발"
     echo "2. 날씨"
+    echo "3. 돌아가기"
     read advice_choice
 
     case $advice_choice in
         1) developer_advice ;;
 	2) weather_advice ;;
+	3) main_menu ;;
 	*) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; advice_menu ;;
     esac
 }
 
 developer_advice() {
     # 제목 파일과 내용 파일 경로 정의
-    title_file="developer_advice.txt"
-    content_file="test_contents.txt"
+    title_file="advice_files/developer_Title.txt"
+    content_file="advice_files/developer_Contents.txt"
 
     # 제목 파일 읽기
     IFS=$'\n' read -r -d '' -a titles < "$title_file"
@@ -89,15 +91,18 @@ developer_advice() {
     for i in "${!titles[@]}"; do
         echo "$((i + 1)). ${titles[$i]}"
     done
+	echo "$(( ${#titles[@]} + 1 )). 돌아가기"
 
     # 사용자 선택 입력
     echo "원하는 조언의 번호를 선택해 주세요:"
     read advice_choice
 
     # 입력 검증 및 상세 내용 출력
-    if [[ "$advice_choice" -lt 1 || "$advice_choice" -gt ${#titles[@]} ]]; then
+    if [[ "$advice_choice" -lt 1 || "$advice_choice" -gt $(( ${#titles[@]} + 1 )) ]]; then
         echo "잘못된 선택입니다. 다시 시도해 주세요."
         developer_advice
+    elif [[ "$advice_choice" -eq $(( ${#titles[@]} + 1 )) ]]; then
+        main_menu
     else
         echo "— 선택한 조언 —"
         # 선택한 조언의 내용 출력 (내용 파일에서 동일 인덱스의 내용 가져오기)
@@ -110,7 +115,27 @@ developer_advice() {
 
 # 날씨 관련 조언 (임시 기능)
 weather_advice() {
-    echo "날씨 관련 조언은 현재 준비 중입니다."
+  echo "1. 0~10도"
+  echo "2. 10~20도"
+  echo "3. 20~30도"
+  echo "4. 돌아가기"
+  read weather_choice
+
+  case $weather_choice in
+	1)
+	   echo "$user_name 님! 0~10도의 날씨에 관해 조언할게요!"
+	   cat advice_files/temperature_0to10.txt | shuf -n 1;;
+	2)
+	   echo "$user_name 님! 10~20도의 날씨에 관해 조언할게요!"
+       	   cat advice_files/temperature_10to20.txt | shuf -n 1;;
+	3)
+	   echo "$user_name 님! 20~30도의 날씨에 관해 조언할게요!"
+       	   cat advice_files/temperature_20to30.txt | shuf -n 1;;
+	4) advice_menu ;;
+	*)
+	   echo "잘못된 옵션입니다. 다시 시도해 주세요."
+	   weather_advice ;;
+  esac
 }
 
 
