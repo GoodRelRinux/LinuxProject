@@ -15,13 +15,15 @@ main_menu() {
     echo "카테고리를 선택해 주세요:"
     echo "1. 운세"
     echo "2. 조언"
-    echo "3. 종료"
+    echo "3. 컬렉션"
+    echo "4. 종료"
     read category_choice
 
     case $category_choice in
         1) fortune_menu ;;
         2) advice_menu ;;
-        3) exit ;;
+	3) com_web ;;
+        4) exit ;;
         *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; main_menu ;;
     esac
 }
@@ -37,22 +39,42 @@ fortune_menu() {
     echo "6. 별자리"
     read fortune_choice
 
+    #로그파일
+	log_file="logs/${user_name}_fortune_log.txt"
+	mkdir -p logs
+
     case $fortune_choice in
         1)
             echo "$user_name 님! 오늘의 연애 운세를 말씀드릴게요!"
-            cat love.txt | shuf -n 1 ;;
+            fortune=$(cat love.txt | shuf -n 1) 
+	    echo "$fortune"
+	    echo "$(date) - 연애: $fortune" >> "$log_file" 
+	    ;;
         2)
             echo "$user_name 님! 오늘의 개발 운세를 말씀드릴게요!"
-            cat developer.txt | shuf -n 1 ;;
+            fortune=$(cat developer.txt | shuf -n 1)
+	    echo "$fortune"
+            echo "$(date) - 개발: $fortune" >> "$log_file"
+	    ;;
         3)
             echo "$user_name 님! 오늘의 금전운을 말씀드릴게요!"
-            cat wealth.txt | shuf -n 1 ;;
+            fortune=$(cat wealth.txt | shuf -n 1) 
+	    echo "$fortune"
+            echo "$(date) - 금전운: $fortune" >> "$log_file"
+	    ;;
+
         4)
             echo "$user_name 님! 오늘의 인간관계 운세를 말씀드릴게요!"
-            cat relationships.txt | shuf -n 1 ;;
+            fortune=$(cat relationships.txt | shuf -n 1)
+	    echo "$fortune"
+            echo "$(date) - 인간관계: $fortune" >> "$log_file"
+            ;;
         5)
             echo "$user_name 님! 오늘의 건강 운세를 말씀드릴게요!"
-            cat health.txt | shuf -n 1 ;;
+            fortune=$(cat health.txt | shuf -n 1)
+	    echo "$fortune"
+            echo "$(date) - 건강: $fortune" >> "$log_file"
+            ;;
         6)
             echo "$user_name 님! 오늘의 별자리 운세를 말씀드릴게요!"
             zodiac_fortune ;;
@@ -179,5 +201,17 @@ zodiac_fortune() {
     fortune=$(shuf -n 1 "$zodiac_file")
     echo "$fortune"
 }
+
+com_web() {
+	react_app_path="/mnt/c/linux_react/linuxui"
+
+	cd "$react_app_path" || exit 1
+	npm start &
+	react_url="http://localhost:3000"
+	sleep 3
+	xdg-open "$react_url"
+
+echo "React 애플리케이션이 실행되었습니다. 웹 브라우저를 확인하세요."
+	}
 
 main_menu
