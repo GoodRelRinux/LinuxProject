@@ -39,8 +39,7 @@ fortune_menu() {
     echo "6. 별자리"
     read fortune_choice
 
-    #로그파일
-	log_file="logs/${user_name}_fortune_log.txt"
+    #로그 디렉생성
 	mkdir -p logs
 
     case $fortune_choice in
@@ -48,32 +47,32 @@ fortune_menu() {
             echo "$user_name 님! 오늘의 연애 운세를 말씀드릴게요!"
             fortune=$(cat love.txt | shuf -n 1) 
 	    echo "$fortune"
-	    echo "$(date) - 연애: $fortune" >> "$log_file" 
+	    echo "$(date) - 연애: $fortune" >> "logs/${user_name}_love_log.txt" 
 	    ;;
         2)
             echo "$user_name 님! 오늘의 개발 운세를 말씀드릴게요!"
             fortune=$(cat developer.txt | shuf -n 1)
 	    echo "$fortune"
-            echo "$(date) - 개발: $fortune" >> "$log_file"
+            echo "$(date) - 개발: $fortune" >> "logs/${user_name}_developer_log.txt"
 	    ;;
         3)
             echo "$user_name 님! 오늘의 금전운을 말씀드릴게요!"
             fortune=$(cat wealth.txt | shuf -n 1) 
 	    echo "$fortune"
-            echo "$(date) - 금전운: $fortune" >> "$log_file"
+            echo "$(date) - 금전운: $fortune" >> "logs/${user_name}_wealth_log.txt"
 	    ;;
 
         4)
             echo "$user_name 님! 오늘의 인간관계 운세를 말씀드릴게요!"
             fortune=$(cat relationships.txt | shuf -n 1)
 	    echo "$fortune"
-            echo "$(date) - 인간관계: $fortune" >> "$log_file"
+            echo "$(date) - 인간관계: $fortune" >> "logs/${user_name}_relationships_log.txt"
             ;;
         5)
             echo "$user_name 님! 오늘의 건강 운세를 말씀드릴게요!"
             fortune=$(cat health.txt | shuf -n 1)
 	    echo "$fortune"
-            echo "$(date) - 건강: $fortune" >> "$log_file"
+            echo "$(date) - 건강: $fortune" >> "logs/${user_name}_health_log.txt"
             ;;
         6)
             echo "$user_name 님! 오늘의 별자리 운세를 말씀드릴게요!"
@@ -200,18 +199,7 @@ zodiac_fortune() {
     echo "${user_name}님, 오늘의 ${zodiac_sign} 운세를 말씀드릴게요!"
     fortune=$(shuf -n 1 "$zodiac_file")
     echo "$fortune"
+    echo "$(date) - ${zodiac_sign}: $fortune" >> "logs/${user_name}_${zodiac_sign}_log.txt"
 }
-
-com_web() {
-	react_app_path="/mnt/c/linux_react/linuxui"
-
-	cd "$react_app_path" || exit 1
-	npm start &
-	react_url="http://localhost:3000"
-	sleep 3
-	xdg-open "$react_url"
-
-echo "React 애플리케이션이 실행되었습니다. 웹 브라우저를 확인하세요."
-	}
 
 main_menu
