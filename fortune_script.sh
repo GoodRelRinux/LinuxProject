@@ -10,6 +10,21 @@ zodiac_file="zodiac.txt"
 advice_file="advice.txt"
 developer_advice_file="developer_advice.txt"
 
+# 메일 관련 설정 (AWS SES 활용)
+send_email() {
+    echo "이메일 주소를 입력해 주세요:"
+    read email_address
+    echo "운세 또는 조언을 이메일로 보내드립니다..."
+
+    # SES를 통해 이메일 보내기
+    aws ses send-email \
+        --from "dkdud981217@gmail.com" \
+        --destination "ToAddresses=$email_address" \
+        --message "Subject={Data=운세 또는 조언,Charset=utf8},Body={Text={Data=$fortune,Charset=utf8}}" \
+        --region "us-east-1"
+    echo "이메일을 성공적으로 보냈습니다!"
+}
+
 # 메인 메뉴
 main_menu() {
     echo "카테고리를 선택해 주세요:"
@@ -22,7 +37,7 @@ main_menu() {
     case $category_choice in
         1) fortune_menu ;;
         2) advice_menu ;;
-	3) com_web ;;
+        3) com_web ;;
         4) exit ;;
         *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; main_menu ;;
     esac
@@ -39,48 +54,49 @@ fortune_menu() {
     echo "6. 별자리"
     read fortune_choice
 
-    #로그 디렉생성
-	mkdir -p logs
+    mkdir -p logs
 
     case $fortune_choice in
         1)
-            echo "$user_name 님! 오늘의 연애 운세를 말씀드릴게요!"
-            fortune=$(cat love.txt | shuf -n 1) 
-	    echo "$fortune"
-	    echo "$(date) - 연애: $fortune" >> "logs/${user_name}_love_log.txt" 
-	    ;;
+            fortune=$(cat love.txt | shuf -n 1)
+            fortune_message="$user_name 님! 오늘의 연애 운세는: $fortune"
+            ;;
         2)
-            echo "$user_name 님! 오늘의 개발 운세를 말씀드릴게요!"
             fortune=$(cat developer.txt | shuf -n 1)
-	    echo "$fortune"
-            echo "$(date) - 개발: $fortune" >> "logs/${user_name}_developer_log.txt"
-	    ;;
+            fortune_message="$user_name 님! 오늘의 개발 운세는: $fortune"
+            ;;
         3)
-            echo "$user_name 님! 오늘의 금전운을 말씀드릴게요!"
-            fortune=$(cat wealth.txt | shuf -n 1) 
-	    echo "$fortune"
-            echo "$(date) - 금전운: $fortune" >> "logs/${user_name}_wealth_log.txt"
-	    ;;
-
+            fortune=$(cat wealth.txt | shuf -n 1)
+            fortune_message="$user_name 님! 오늘의 금전운은: $fortune"
+            ;;
         4)
-            echo "$user_name 님! 오늘의 인간관계 운세를 말씀드릴게요!"
             fortune=$(cat relationships.txt | shuf -n 1)
-	    echo "$fortune"
-            echo "$(date) - 인간관계: $fortune" >> "logs/${user_name}_relationships_log.txt"
+            fortune_message="$user_name 님! 오늘의 인간관계 운세는: $fortune"
             ;;
         5)
-            echo "$user_name 님! 오늘의 건강 운세를 말씀드릴게요!"
             fortune=$(cat health.txt | shuf -n 1)
-	    echo "$fortune"
-            echo "$(date) - 건강: $fortune" >> "logs/${user_name}_health_log.txt"
+            fortune_message="$user_name 님! 오늘의 건강 운세는: $fortune"
             ;;
         6)
-            echo "$user_name 님! 오늘의 별자리 운세를 말씀드릴게요!"
-            zodiac_fortune ;;
+            zodiac_fortune
+            return
+            ;;
         *)
             echo "잘못된 옵션입니다. 다시 시도해 주세요."
             fortune_menu ;;
-    esac  # 이 부분이 누락되어 있었음
+    esac
+
+    echo "$fortune_message"
+
+    # 메일로 보내기 여부 확인
+    echo "오늘의 운세를 메일로 받아보시겠습니까? (y/n)"
+    read send_email_choice
+
+    if [[ "$send_email_choice" == "y" || "$send_email_choice" == "Y" ]]; then
+        send_email
+    else
+        echo "운세를 종료합니다."
+    fi
 }
 
 # 조언 카테고리
@@ -93,75 +109,84 @@ advice_menu() {
 
     case $advice_choice in
         1) developer_advice ;;
-	2) weather_advice ;;
-	3) main_menu ;;
-	*) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; advice_menu ;;
+        2) weather_advice ;;
+        3) main_menu ;;
+        *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; advice_menu ;;
     esac
 }
 
 developer_advice() {
-    # 제목 파일과 내용 파일 경로 정의
     title_file="advice_files/developer_Title.txt"
     content_file="advice_files/developer_Contents.txt"
 
-    # 제목 파일 읽기
     IFS=$'\n' read -r -d '' -a titles < "$title_file"
 
-    # 제목 목록 출력
     echo "조언들:"
     for i in "${!titles[@]}"; do
         echo "$((i + 1)). ${titles[$i]}"
     done
-	echo "$(( ${#titles[@]} + 1 )). 돌아가기"
+    echo "$(( ${#titles[@]} + 1 )). 돌아가기"
 
-    # 사용자 선택 입력
     echo "원하는 조언의 번호를 선택해 주세요:"
     read advice_choice
 
-    # 입력 검증 및 상세 내용 출력
     if [[ "$advice_choice" -lt 1 || "$advice_choice" -gt $(( ${#titles[@]} + 1 )) ]]; then
         echo "잘못된 선택입니다. 다시 시도해 주세요."
         developer_advice
     elif [[ "$advice_choice" -eq $(( ${#titles[@]} + 1 )) ]]; then
         main_menu
     else
-        echo "— 선택한 조언 —"
-        # 선택한 조언의 내용 출력 (내용 파일에서 동일 인덱스의 내용 가져오기)
         content=$(awk -v RS="" "NR==$advice_choice" "$content_file")
-        echo "$content"
+        advice_message="$user_name 님의 오늘의 개발 조언: $content"
+        echo "$advice_message"
+
+        # 메일로 보내기 여부 확인
+        echo "오늘의 조언을 메일로 받아보시겠습니까? (y/n)"
+        read send_email_choice
+
+        if [[ "$send_email_choice" == "y" || "$send_email_choice" == "Y" ]]; then
+            send_email
+        else
+            echo "조언을 종료합니다."
+        fi
     fi
 }
 
-
-
-# 날씨 관련 조언 (임시 기능)
 weather_advice() {
-  echo "1. 0~10도"
-  echo "2. 10~20도"
-  echo "3. 20~30도"
-  echo "4. 돌아가기"
-  read weather_choice
+    echo "1. 0~10도"
+    echo "2. 10~20도"
+    echo "3. 20~30도"
+    echo "4. 돌아가기"
+    read weather_choice
 
-  case $weather_choice in
-	1)
-	   echo "$user_name 님! 0~10도의 날씨에 관해 조언할게요!"
-	   cat advice_files/temperature_0to10.txt | shuf -n 1;;
-	2)
-	   echo "$user_name 님! 10~20도의 날씨에 관해 조언할게요!"
-       	   cat advice_files/temperature_10to20.txt | shuf -n 1;;
-	3)
-	   echo "$user_name 님! 20~30도의 날씨에 관해 조언할게요!"
-       	   cat advice_files/temperature_20to30.txt | shuf -n 1;;
-	4) advice_menu ;;
-	*)
-	   echo "잘못된 옵션입니다. 다시 시도해 주세요."
-	   weather_advice ;;
-  esac
+    case $weather_choice in
+        1)
+            advice=$(cat advice_files/temperature_0to10.txt | shuf -n 1)
+            ;;
+        2)
+            advice=$(cat advice_files/temperature_10to20.txt | shuf -n 1)
+            ;;
+        3)
+            advice=$(cat advice_files/temperature_20to30.txt | shuf -n 1)
+            ;;
+        4) advice_menu ;;
+        *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; weather_advice ;;
+    esac
+
+    weather_advice_message="$user_name 님의 오늘의 날씨 조언: $advice"
+    echo "$weather_advice_message"
+
+    # 메일로 보내기 여부 확인
+    echo "오늘의 날씨 조언을 메일로 받아보시겠습니까? (y/n)"
+    read send_email_choice
+
+    if [[ "$send_email_choice" == "y" || "$send_email_choice" == "Y" ]]; then
+        send_email
+    else
+        echo "날씨 조언을 종료합니다."
+    fi
 }
 
-
-
-# 별자리 운세
 zodiac_fortune() {
     echo "생일 월을 입력해 주세요 (1-12):"
     read birth_month
@@ -192,14 +217,22 @@ zodiac_fortune() {
         zodiac_sign="물병자리"
     elif [[ ($birth_month -eq 2 && $birth_day -ge 19) || ($birth_month -eq 3 && $birth_day -le 20) ]]; then
         zodiac_sign="물고기자리"
-    else
-        zodiac_sign="알 수 없음"
     fi
 
-    echo "${user_name}님, 오늘의 ${zodiac_sign} 운세를 말씀드릴게요!"
-    fortune=$(shuf -n 1 "$zodiac_file")
-    echo "$fortune"
-    echo "$(date) - ${zodiac_sign}: $fortune" >> "logs/${user_name}_${zodiac_sign}_log.txt"
+    fortune=$(cat "zodiac/$zodiac_sign.txt" | shuf -n 1)
+    fortune_message="$user_name 님의 오늘의 별자리 운세 ($zodiac_sign): $fortune"
+    echo "$fortune_message"
+
+    # 메일로 보내기 여부 확인
+    echo "오늘의 별자리 운세를 메일로 받아보시겠습니까? (y/n)"
+    read send_email_choice
+
+    if [[ "$send_email_choice" == "y" || "$send_email_choice" == "Y" ]]; then
+        send_email
+    else
+        echo "별자리 운세를 종료합니다."
+    fi
 }
 
+# 메인 프로그램 실행
 main_menu
