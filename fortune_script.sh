@@ -10,6 +10,9 @@ zodiac_file="zodiac.txt"
 advice_file="advice.txt"
 developer_advice_file="developer_advice.txt"
 
+# 로그 디렉터리 생성
+mkdir -p logs
+
 # 메일 관련 설정 (AWS SES 활용)
 send_email() {
     echo "이메일 주소를 입력해 주세요:"
@@ -20,7 +23,7 @@ send_email() {
     aws ses send-email \
         --from "dkdud981217@gmail.com" \
         --destination "ToAddresses=$email_address" \
-        --message "Subject={Data=운세 또는 조언,Charset=utf8},Body={Text={Data=$fortune,Charset=utf8}}" \
+        --message "Subject={Data=운세 또는 조언,Charset=utf8},Body={Text={Data=$fortune_message,Charset=utf8}}" \
         --region "us-east-1"
     echo "이메일을 성공적으로 보냈습니다!"
 }
@@ -37,7 +40,7 @@ main_menu() {
     case $category_choice in
         1) fortune_menu ;;
         2) advice_menu ;;
-        3) com_web ;;
+        3) collection_menu ;;
         4) exit ;;
         *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; main_menu ;;
     esac
@@ -54,28 +57,31 @@ fortune_menu() {
     echo "6. 별자리"
     read fortune_choice
 
-    mkdir -p logs
-
     case $fortune_choice in
         1)
             fortune=$(cat love.txt | shuf -n 1)
             fortune_message="$user_name 님! 오늘의 연애 운세는: $fortune"
+            echo "$(date) - 연애: $fortune" >> "logs/${user_name}_love_log.txt"
             ;;
         2)
             fortune=$(cat developer.txt | shuf -n 1)
             fortune_message="$user_name 님! 오늘의 개발 운세는: $fortune"
+            echo "$(date) - 개발: $fortune" >> "logs/${user_name}_developer_log.txt"
             ;;
         3)
             fortune=$(cat wealth.txt | shuf -n 1)
             fortune_message="$user_name 님! 오늘의 금전운은: $fortune"
+            echo "$(date) - 금전운: $fortune" >> "logs/${user_name}_wealth_log.txt"
             ;;
         4)
             fortune=$(cat relationships.txt | shuf -n 1)
             fortune_message="$user_name 님! 오늘의 인간관계 운세는: $fortune"
+            echo "$(date) - 인간관계: $fortune" >> "logs/${user_name}_relationships_log.txt"
             ;;
         5)
             fortune=$(cat health.txt | shuf -n 1)
             fortune_message="$user_name 님! 오늘의 건강 운세는: $fortune"
+            echo "$(date) - 건강: $fortune" >> "logs/${user_name}_health_log.txt"
             ;;
         6)
             zodiac_fortune
@@ -139,6 +145,7 @@ developer_advice() {
         content=$(awk -v RS="" "NR==$advice_choice" "$content_file")
         advice_message="$user_name 님의 오늘의 개발 조언: $content"
         echo "$advice_message"
+        echo "$(date) - 개발 조언: $content" >> "logs/${user_name}_developer_advice_log.txt"
 
         # 메일로 보내기 여부 확인
         echo "오늘의 조언을 메일로 받아보시겠습니까? (y/n)"
@@ -175,6 +182,7 @@ weather_advice() {
 
     weather_advice_message="$user_name 님의 오늘의 날씨 조언: $advice"
     echo "$weather_advice_message"
+    echo "$(date) - 날씨 조언: $advice" >> "logs/${user_name}_weather_advice_log.txt"
 
     # 메일로 보내기 여부 확인
     echo "오늘의 날씨 조언을 메일로 받아보시겠습니까? (y/n)"
@@ -222,6 +230,7 @@ zodiac_fortune() {
     fortune=$(cat "zodiac/$zodiac_sign.txt" | shuf -n 1)
     fortune_message="$user_name 님의 오늘의 별자리 운세 ($zodiac_sign): $fortune"
     echo "$fortune_message"
+    echo "$(date) - ${zodiac_sign}: $fortune" >> "logs/${user_name}_zodiac_log.txt"
 
     # 메일로 보내기 여부 확인
     echo "오늘의 별자리 운세를 메일로 받아보시겠습니까? (y/n)"
