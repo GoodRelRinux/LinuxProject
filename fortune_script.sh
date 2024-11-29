@@ -8,10 +8,11 @@ read user_name
 # 로그 디렉터리 생성
 mkdir -p logs
 
+# 메일 관련 설정
 send_email() {
     echo "이메일 주소를 입력해 주세요:"
     read email_address
-    echo "오늘의 운세를 메일로 보내드릴게요!"
+    echo "오늘의 내용을 메일로 보내드립니다!"
 
     json_message="{
         \"Subject\": {
@@ -32,10 +33,8 @@ send_email() {
         --message "$json_message" \
         --region "us-east-1"
 
-    echo "오늘의 운세가 메일로 전송되었어요!!"
+    echo "메일 전송이 완료되었습니다!"
 }
-
-
 
 # 메인 메뉴
 main_menu() {
@@ -148,7 +147,14 @@ zodiac_fortune() {
         zodiac_sign="물고기자리"
     fi
 
-    fortune=$(cat zodiac.txt | shuf -n 1)
+    zodiac_file="zodiac/${zodiac_sign}.txt"
+
+    if [[ -f "$zodiac_file" ]]; then
+        fortune=$(cat "$zodiac_file" | shuf -n 1)
+    else
+        fortune="운세 파일이 존재하지 않습니다."
+    fi
+
     fortune_message="$user_name 님, 오늘의 ${zodiac_sign} 운세를 알려드릴게요!\n$fortune"
     echo -e "$fortune_message"
     echo -e "$(date) - ${zodiac_sign}: $fortune" >> "logs/${user_name}_zodiac_log.txt"
@@ -168,12 +174,14 @@ zodiac_fortune() {
 advice_menu() {
     echo "조언 카테고리:"
     echo "1. 개발"
-    echo "2. 돌아가기"
+    echo "2. 날씨"
+    echo "3. 돌아가기"
     read advice_choice
 
     case $advice_choice in
         1) developer_advice ;;
-        2) main_menu ;;
+        2) weather_advice ;;
+        3) main_menu ;;
         *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; advice_menu ;;
     esac
 }
@@ -200,9 +208,53 @@ developer_advice() {
         main_menu
     else
         content=$(awk -v RS="" "NR==$advice_choice" "$content_file")
-        advice_message="$user_name 님, 오늘의 개발 조언을 알려드릴게요!\n$content"
-        echo -e "$advice_message"
-        echo -e "$(date) - 개발 조언: $content" >> "logs/${user_name}_developer_advice_log.txt"
+        advice_message="$user_name 님, 오늘의 개발 조언: $content"
+        echo "$advice_message"
+
+        # 메일로 보내기 여부 확인
+        echo "오늘의 조언을 메일로 받아보시겠습니까? (y/n)"
+        read send_email_choice
+
+        if [[ "$send_email_choice" == "y" || "$send_email_choice" == "Y" ]]; then
+            send_email
+        else
+            echo "조언을 종료합니다."
+        fi
+    fi
+}
+
+weather_advice() {
+    echo "1. 0~10도"
+    echo "2. 10~20도"
+    echo "3. 20~30도"
+    echo "4. 돌아가기"
+    read weather_choice
+
+    case $weather_choice in
+        1)
+            advice=$(cat advice_files/temperature_0to10.txt | shuf -n 1)
+            ;;
+        2)
+            advice=$(cat advice_files/temperature_10to20.txt | shuf -n 1)
+            ;;
+        3)
+            advice=$(cat advice_files/temperature_20to30.txt | shuf -n 1)
+            ;;
+        4) advice_menu ;;
+        *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; weather_advice ;;
+    esac
+
+    weather_advice_message="$user_name 님의 오늘의 날씨 조언: $advice"
+    echo "$weather_advice_message"
+
+    # 메일로 보내기 여부 확인
+    echo "오늘의 날씨 조언을 메일로 받아보시겠습니까? (y/n)"
+    read send_email_choice
+
+    if [[ "$send_email_choice" == "y" || "$send_email_choice" == "Y" ]]; then
+        send_email
+    else
+        echo "날씨 조언을 종료합니다."
     fi
 }
 
