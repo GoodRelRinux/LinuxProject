@@ -12,7 +12,7 @@ mkdir -p logs
 send_email() {
     echo "이메일 주소를 입력해 주세요:"
     read email_address
-    echo "오늘의 내용을 메일로 보내드립니다!"
+    echo "오늘의 운세를 메일로 보내드릴게요!"
 
     json_message="{
         \"Subject\": {
