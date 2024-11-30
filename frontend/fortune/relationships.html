@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>인간관계 운세 카드</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        background: linear-gradient(to bottom, #000000, #0e0d0d);
+        font-family: Arial, sans-serif;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.2);
+        width: 100%;
+        text-align: center;
+        padding: 15px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      header h1 {
+        font-size: 24px;
+        color: #fff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .cards-container {
+        position: relative;
+        width: 560px;
+        height: 300px;
+        margin: 20px 0;
+      }
+
+      .card {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        width: 200px;
+        height: 260px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, top 0.3s ease,
+          left 0.3s ease;
+        cursor: pointer;
+      }
+
+      .card:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      }
+
+      .card:nth-child(1) {
+        top: 210px;
+        left: -70px;
+        transform: rotate(-40deg) translate(-20px, -40px);
+      }
+
+      .card:nth-child(2) {
+        top: 120px;
+        left: 40px;
+        transform: rotate(-20deg) translate(-20px, -40px);
+      }
+
+      .card:nth-child(3) {
+        top: 30px;
+        left: 180px;
+        transform: rotate(0deg);
+      }
+
+      .card:nth-child(4) {
+        top: 120px;
+        left: 320px;
+        transform: rotate(20deg) translate(20px, -40px);
+      }
+
+      .card:nth-child(5) {
+        top: 210px;
+        left: 430px;
+        transform: rotate(40deg) translate(20px, -40px);
+      }
+
+      .gold-card {
+        background: linear-gradient(to right, #ffd700, #ffa500);
+        border-radius: 15px;
+        padding: 80px;
+        margin-top: 40px;
+        text-align: center;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        max-width: 150px;
+        width: calc(100% - 40px);
+      }
+
+      .gold-card h2 {
+        font-size: 18px;
+        color: #fff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .gold-card p {
+        font-size: 16px;
+        color: #fff;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+
+      .select-box {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        background: #000;
+        color: #fff;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      .select-box option {
+        background: #000000;
+        color: #fff;
+      }
+      .inactive {
+        pointer-events: none;
+        opacity: 0.6;
+      }
+      .back-button {
+        margin-top: 30px;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        background: #ffffff;
+        color: #000000;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .back-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .back-button:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>✨ 인간관계 운세 카드 ✨</h1>
+    </header>
+
+    <div class="cards-container">
+      <div class="card" onclick="toggleCard(this)">
+        <h2>카드 1</h2>
+        <p>
+          오늘은 새로운 인연이 당신을 기다리고 있어요. 용기를 내어 다가가
+          보세요.
+        </p>
+      </div>
+      <div class="card" onclick="toggleCard(this)">
+        <h2>카드 2</h2>
+        <p>
+          오래된 친구가 연인으로 다가올 수 있어요. 두근거리는 마음을 숨기지
+          마세요.
+        </p>
+      </div>
+      <div class="card" onclick="toggleCard(this)">
+        <h2>카드 3</h2>
+        <p>
+          사랑이 깊어지는 하루입니다. 상대에게 진심 어린 감사를 표현해 보세요.
+        </p>
+      </div>
+      <div class="card" onclick="toggleCard(this)">
+        <h2>카드 4</h2>
+        <p>
+          현재 관계에 불만이 있다면, 원인을 파악해보세요. 스스로의 마음을
+          점검하는 것이 중요합니다.
+        </p>
+      </div>
+      <div class="card" onclick="toggleCard(this)">
+        <h2>카드 5</h2>
+        <p>
+          서로의 진솔한 감정을 나누며 더욱 가까워질 수 있어요. 용기 내어 마음을
+          표현해 보세요.
+        </p>
+      </div>
+    </div>
+
+    <button class="back-button" onclick="location.assign('/newpage.html')">
+      운세 선택으로 돌아가기
+    </button>
+
+    <select class="select-box" onchange="handleSelect(this)">
+      <option value="love.html">연애</option>
+      <option value="developer.html">개발</option>
+      <option value="wealth.html">금전</option>
+      <option value="" selected>>인간관계</option>
+      <option value="health.html">건강</option>
+    </select>
+
+    <div class="gold-card">
+      <h2>🌟 Gold Card 🌟</h2>
+      <p>당신은 모든 운세를 수집하셨습니다!</p>
+    </div>
+
+    <script>
+      function toggleCard(card) {
+        const allCards = document.querySelectorAll(".card");
+        allCards.forEach((c) => {
+          if (c !== card) {
+            c.classList.add("inactive");
+          }
+        });
+        card.classList.toggle("active");
+
+        if (card.classList.contains("active")) {
+          card.style.transform = "scale(2) translate(50%, 50%)";
+          card.style.top = "-10%";
+          card.style.left = "-5%";
+          card.style.background =
+            "rgba(0, 0, 0, 1)"; /* 카드 크기가 커질 때 색상 변경 */
+        } else {
+          card.style.transform = card.getAttribute("data-original-transform");
+          card.style.top = card.getAttribute("data-original-top");
+          card.style.left = card.getAttribute("data-original-left");
+          card.style.background = "rgba(255, 255, 255, 0.3)";
+        }
+
+        if (!card.classList.contains("active")) {
+          allCards.forEach((c) => c.classList.remove("inactive"));
+        }
+      }
+
+      function handleSelect(select) {
+        const value = select.value;
+        if (value) {
+          location.assign(value);
+        }
+      }
+
+      window.onload = function () {
+        const cards = document.querySelectorAll(".card");
+        cards.forEach((card) => {
+          card.setAttribute("data-original-transform", card.style.transform);
+          card.setAttribute("data-original-top", card.style.top);
+          card.setAttribute("data-original-left", card.style.left);
+          card.setAttribute("data-original-background", card.style.background);
+        });
+      };
+    </script>
+  </body>
+</html>
