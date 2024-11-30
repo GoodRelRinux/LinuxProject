@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>운세 확인</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(
+          to bottom,
+          #210a38,
+          #6a0dad
+        ); /* 보라색 그라데이션 */
+        font-family: Arial, sans-serif;
+        color: #fff;
+      }
+
+      h1 {
+        font-size: 28px;
+        color: #f1f1f1;
+        margin-bottom: 30px;
+      }
+
+      .button-group {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      width: 80%;
+      max-width: 500px;
+      justify-content: center;
+      flex-wrap: wrap;
+      }
+
+     .fortune-button {
+     padding: 12px 20px;
+     font-size: 16px;
+     border: none;
+     border-radius: 5px;
+     cursor: pointer;
+     color: #fff;
+     background: linear-gradient(to bottom, #1e3b70, #1e1e3a);
+     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+     transition: transform 0.2s, background 0.3s;
+     text-align: center;
+    }
+
+    .fortune-button:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(to bottom, #1e3b70, #1e1e3a);
+    }
+
+    .fortune-button:active {
+     transform: translateY(0);
+     box-shadow: none;
+  }
+    </style>
+  </head>
+  <body>
+    <h1>보고싶은 운세를 선택해주세요.</h1>
+    <div class="button-group">
+      <button
+        class="fortune-button"
+        onclick="window.location.href='fortune/love.html'"
+      >
+        연애
+      </button>
+      <button
+        class="fortune-button"
+        onclick="window.location.href='fortune/developer.html'"
+      >
+        개발
+      </button>
+      <button
+        class="fortune-button"
+        onclick="window.location.href='fortune/wealth.html'"
+      >
+        금전
+      </button>
+      <button
+        class="fortune-button"
+        onclick="window.location.href='fortune/relationships.html'"
+      >
+        인간관계
+      </button>
+      <button
+        class="fortune-button"
+        onclick="window.location.href='fortune/health.html'"
+      >
+        건강
+      </button>
+    </div>
+  </body>
+</html>
