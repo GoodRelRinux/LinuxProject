@@ -1,4 +1,4 @@
-#!/bin/bash
+#	!/bin/bash
 
 json_file="/path/to/react-app/src/logs/user_fortune_log.json"
 
@@ -17,6 +17,7 @@ while IFS= read -r line; do
   echo "    \"category\": \"$category\"," >> "$json_file"
   echo "    \"message\": \"$message\"" >> "$json_file"
   echo "  }," >> "$json_file"
+
 done < "$log_file"
 sed -i '$ s/,$//' "$json_file"
 echo "]" >> "$json_file"

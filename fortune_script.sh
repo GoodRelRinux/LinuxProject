@@ -257,6 +257,7 @@ weather_advice() {
         echo "날씨 조언을 종료합니다."
     fi
 }
-
+LOG_FILE="logs/user_fortune_log.txt"
+echo "$(date) - ${category}: ${fortune}" >> "$LOG_FILE"
 # 메인 프로그램 실행
 main_menu

@@ -1,0 +1,6 @@
+while true; do
+  { 
+    echo -ne "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n"; 
+    cat logs/user_fortune_log.json; 
+  } | nc -l -p 8000;
+done
