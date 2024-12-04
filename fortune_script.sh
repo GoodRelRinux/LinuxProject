@@ -6,7 +6,7 @@ echo "이름을 입력해 주세요:"
 read user_name
 
 # 로그 디렉터리 생성
-mkdir -p logs
+mkdir -p logs_json
 
 # 메일 관련 설정
 send_email() {
@@ -65,34 +65,34 @@ fortune_menu() {
 
     case $fortune_choice in
         1)
-            fortune=$(cat love.txt | shuf -n 1)
+            fortune=$(cat fortune_files/love.txt | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 연애 운세를 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
-            echo -e "$(date) - 연애: $fortune" >> "logs/${user_name}_love_log.txt"
+            log_fortune_to_json "love" "$fortune"
             ;;
         2)
-            fortune=$(cat developer.txt | shuf -n 1)
+            fortune=$(cat fortune_files/developer.txt | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 개발 운세를 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
-            echo -e "$(date) - 개발: $fortune" >> "logs/${user_name}_developer_log.txt"
+            log_fortune_to_json "developer" "$fortune"
             ;;
         3)
-            fortune=$(cat wealth.txt | shuf -n 1)
+            fortune=$(cat fortune_files/wealth.txt | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 금전운을 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
-            echo -e "$(date) - 금전운: $fortune" >> "logs/${user_name}_wealth_log.txt"
+            log_fortune_to_json "wealth" "$fortune"
             ;;
         4)
-            fortune=$(cat relationships.txt | shuf -n 1)
+            fortune=$(cat fortune_files/relationships.txt | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 인간관계 운세를 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
-            echo -e "$(date) - 인간관계: $fortune" >> "logs/${user_name}_relationships_log.txt"
+            log_fortune_to_json "relationships" "$fortune"
             ;;
         5)
-            fortune=$(cat health.txt | shuf -n 1)
+            fortune=$(cat fortune_files/health.txt | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 건강 운세를 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
-            echo -e "$(date) - 건강: $fortune" >> "logs/${user_name}_health_log.txt"
+            log_fortune_to_json "health" "$fortune"
             ;;
         6)
             zodiac_fortune
@@ -111,6 +111,24 @@ fortune_menu() {
         send_email
     else
         echo "운세를 종료합니다."
+    fi
+}
+
+# 운세 기록을 JSON 파일로 저장하는 함수
+log_fortune_to_json() {
+    category=$1
+    fortune=$2
+    log_file="logs_json/${user_name}_${category}_log.json"
+
+    # JSON 형식으로 날짜와 운세 내용 저장
+    json_entry=$(jq -n --arg date "$(date)" --arg category "$category" --arg message "$fortune" \
+        '{date: $date, category: $category, message: $message}')
+
+    # 기존 JSON 파일에 추가하거나 새로 생성
+    if [[ -f "$log_file" ]]; then
+        jq ". + [$json_entry]" "$log_file" > temp.json && mv temp.json "$log_file"
+    else
+        echo "[$json_entry]" > "$log_file"
     fi
 }
 
@@ -147,7 +165,7 @@ zodiac_fortune() {
         zodiac_sign="물고기자리"
     fi
 
-    zodiac_file="zodiac/${zodiac_sign}.txt"
+    zodiac_file="fortune_files/zodiac/${zodiac_sign}.txt"
 
     if [[ -f "$zodiac_file" ]]; then
         fortune=$(cat "$zodiac_file" | shuf -n 1)
@@ -157,7 +175,7 @@ zodiac_fortune() {
 
     fortune_message="$user_name 님, 오늘의 ${zodiac_sign} 운세를 알려드릴게요!\n$fortune"
     echo -e "$fortune_message"
-    echo -e "$(date) - ${zodiac_sign}: $fortune" >> "logs/${user_name}_zodiac_log.txt"
+    log_fortune_to_json "${zodiac_sign}" "$fortune"
 
     # 메일로 보내기 여부 확인
     echo "오늘의 별자리 운세를 메일로 받아보시겠습니까? (y/n)"
