@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘의 운세</title>
+    <style>
+      body {
+        background-color: #3e0177;
+        color: white;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        text-align: center;
+        background-color: #2a014e;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+      .container h1 {
+        font-size: 2em;
+        margin-bottom: 10px;
+      }
+      .container input[type="text"] {
+        padding: 10px;
+        width: 80%;
+        margin-bottom: 15px;
+        border: none;
+        border-radius: 5px;
+      }
+      .container button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #ff9900;
+        color: white;
+        font-size: 1em;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .container button:hover {
+        background-color: #e68a00;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>오늘의 운세</h1>
+      <p>운세를 확인하려면 이름을 입력해주세요.</p>
+      <input type="text" id="username" placeholder="이름 입력" />
+      <br />
+      <button onclick="checkFortune()">운세 확인 하기</button>
+    </div>
+
+    <script>
+      function checkFortune() {
+        const username = document.getElementById("username").value;
+        if (username) {
+          // 페이지 이동 시 사용자 이름 전달
+          window.location.href =
+            "categories.html?username=" + encodeURIComponent(username);
+        } else {
+          alert("이름을 입력해주세요.");
+        }
+      }
+    </script>
+  </body>
+</html>
