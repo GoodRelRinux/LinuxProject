@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>운세 컨텐츠</title>
+    <style>
+      body {
+        background-color: #3e0177;
+        color: white;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        text-align: center;
+        background-color: #2a014e;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+      .container h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+      }
+      .container button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        background-color: #0066cc;
+        color: white;
+        font-size: 1em;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .container button:hover {
+        background-color: #005bb5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>보고싶은 운세를 선택해주세요.</h1>
+      <button onclick="selectCategory('연애')">연애</button>
+      <button onclick="selectCategory('개발')">개발</button>
+      <button onclick="selectCategory('금전')">금전</button>
+      <button onclick="selectCategory('인간관계')">인간관계</button>
+      <button onclick="selectCategory('건강')">건강</button>
+      <button onclick="selectCategory('별자리')">별자리</button>
+    </div>
+
+    <script>
+      let username;
+
+      window.onload = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        username = urlParams.get("username");
+        if (username) {
+          console.log("사용자 이름: " + username);
+        }
+      };
+
+      async function selectCategory(category) {
+        if (username) {
+          // 카테고리 이름을 영어로 매핑
+          const categoryMap = {
+            연애: "love",
+            개발: "developer",
+            금전: "wealth",
+            인간관계: "relationships",
+            건강: "health",
+            별자리: "zodiac",
+          };
+
+          const categoryInEnglish = categoryMap[category];
+          const filename = `../logs/${username}_${categoryInEnglish}_log.json`;
+
+          try {
+            const response = await fetch(filename);
+            if (!response.ok) {
+              throw new Error("파일을 찾을 수 없습니다.");
+            }
+            const data = await response.json();
+            console.log(data); // 로그 내용을 콘솔에 출력
+
+            // 모든 메시지를 하나의 문자열로 합쳐서 다음 페이지로 전달
+            const allMessages = data.map((item) => item.message).join("\n");
+
+            // 카테고리에 따라 다른 페이지로 이동하며 필요한 정보 전달
+            let nextPage;
+            if (categoryInEnglish === "love") {
+              nextPage = "fortuneCard/love.html";
+            } else if (categoryInEnglish === "developer") {
+              nextPage = "fortuneCard/developer.html";
+            } else if (categoryInEnglish === "zodiac") {
+              nextPage = "fortuneCard/zodiac.html";
+            } else if (categoryInEnglish === "wealth") {
+              nextPage = "fortuneCard/wealth.html";
+            } else if (categoryInEnglish === "health") {
+              nextPage = "fortuneCard/health.html";
+            } else if (categoryInEnglish === "relationships") {
+              nextPage = "fortuneCard/relationships.html";
+            }
+
+            window.location.href = `${nextPage}?username=${encodeURIComponent(
+              username
+            )}&category=${encodeURIComponent(
+              category
+            )}&message=${encodeURIComponent(allMessages)}`;
+          } catch (error) {
+            console.error("Error:", error);
+            alert("운세 데이터를 가져오는 데 실패했습니다.");
+          }
+        } else {
+          alert("사용자 이름을 찾을 수 없습니다. 로그인 페이지로 돌아가세요.");
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>금전 운세 카드</title>
+    <title>건강 운세 카드</title>
     <style>
       body {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        background: linear-gradient(to bottom, #000000, #0e0d0d);
+        background: linear-gradient(to bottom, #4caf50, #81c784);
         font-family: Arial, sans-serif;
         color: #fff;
         display: flex;
@@ -35,8 +35,8 @@
 
       .cards-container {
         position: relative;
-        width: 560px;
-        height: 300px;
+        width: 600px;
+        height: 400px;
         margin: 20px 0;
       }
 
@@ -44,8 +44,8 @@
         position: absolute;
         background: rgba(255, 255, 255, 0.3);
         border-radius: 10px;
-        width: 200px;
-        height: 260px;
+        width: 240px;
+        height: 320px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -65,13 +65,13 @@
       .card:nth-child(1) {
         top: 210px;
         left: -70px;
-        transform: rotate(-40deg) translate(-20px, -40px);
+        transform: rotate(-40deg) translate(-10px, -30px);
       }
 
       .card:nth-child(2) {
         top: 120px;
-        left: 40px;
-        transform: rotate(-20deg) translate(-20px, -40px);
+        left: 20px;
+        transform: rotate(-20deg) translate(-10px, -30px);
       }
 
       .card:nth-child(3) {
@@ -82,29 +82,29 @@
 
       .card:nth-child(4) {
         top: 120px;
-        left: 320px;
-        transform: rotate(20deg) translate(20px, -40px);
+        left: 340px;
+        transform: rotate(20deg) translate(10px, -30px);
       }
 
       .card:nth-child(5) {
         top: 210px;
         left: 430px;
-        transform: rotate(40deg) translate(20px, -40px);
+        transform: rotate(40deg) translate(10px, -30px);
       }
 
       .gold-card {
-        background: linear-gradient(to right, #ffd700, #ffa500);
+        background: linear-gradient(to right, #76ff03, #43a047);
         border-radius: 15px;
         padding: 80px;
         margin-top: 40px;
         text-align: center;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-        max-width: 150px;
+        max-width: 200px;
         width: calc(100% - 40px);
       }
 
       .gold-card h2 {
-        font-size: 18px;
+        font-size: 24px;
         color: #fff;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
       }
@@ -115,27 +115,6 @@
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
       }
 
-      .select-box {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #fff;
-        border-radius: 5px;
-        background: #000;
-        color: #fff;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-      }
-
-      .select-box option {
-        background: #000000;
-        color: #fff;
-      }
-      .inactive {
-        pointer-events: none;
-        opacity: 0.6;
-      }
       .back-button {
         margin-top: 30px;
         padding: 10px 20px;
@@ -163,47 +142,37 @@
   </head>
   <body>
     <header>
-      <h1>✨ 금전 운세 카드 ✨</h1>
+      <h1>✨ 건강 운세 카드 ✨</h1>
     </header>
 
     <div class="cards-container">
       <div class="card" onclick="toggleCard(this)">
         <h2>카드 1</h2>
-        <p>뜻밖의 수입이 생길 가능성이 높아요. 좋은 기회를 놓치지 마세요.</p>
+        <p class="card-message"></p>
       </div>
       <div class="card" onclick="toggleCard(this)">
         <h2>카드 2</h2>
-        <p>재정적인 결정을 내리기 좋은 날입니다. 차분하게 고민해 보세요.</p>
+        <p class="card-message"></p>
       </div>
-      <div class="card" onclick="toggleCard(this)">
+      <div class="card" id="central-card" onclick="toggleCard(this)">
         <h2>카드 3</h2>
-        <p>
-          오늘은 저축을 시작하기 좋은 날이에요. 미래를 대비해 조금씩 모아보세요.
-        </p>
+        <p class="card-message"></p>
       </div>
       <div class="card" onclick="toggleCard(this)">
         <h2>카드 4</h2>
-        <p>금전적 손실을 볼 수 있는 날이니, 소중한 물건을 잘 챙기세요.</p>
+        <p class="card-message"></p>
       </div>
       <div class="card" onclick="toggleCard(this)">
         <h2>카드 5</h2>
-        <p>지출보다 수입이 더 많은 하루가 될 거예요. 기분 좋게 즐겨보세요.</p>
+        <p class="card-message"></p>
       </div>
     </div>
 
-    <button class="back-button" onclick="location.assign('/newpage.html')">
+    <button class="back-button" onclick="goBackToCategories()">
       운세 선택으로 돌아가기
     </button>
 
-    <select class="select-box" onchange="handleSelect(this)">
-      <option value="love.html">연애</option>
-      <option value="developer.html">개발</option>
-      <option value="" selected>금전</option>
-      <option value="relationships.html">인간관계</option>
-      <option value="health.html">건강</option>
-    </select>
-
-    <div class="gold-card">
+    <div class="gold-card" id="gold-card" style="display: none">
       <h2>🌟 Gold Card 🌟</h2>
       <p>당신은 모든 운세를 수집하셨습니다!</p>
     </div>
@@ -222,8 +191,7 @@
           card.style.transform = "scale(2) translate(50%, 50%)";
           card.style.top = "20%";
           card.style.left = "-10%";
-          card.style.background =
-            "rgba(0, 0, 0, 1)"; /* 카드 크기가 커질 때 색상 변경 */
+          card.style.background = "rgba(0, 0, 0, 1)";
         } else {
           card.style.transform = card.getAttribute("data-original-transform");
           card.style.top = card.getAttribute("data-original-top");
@@ -236,14 +204,8 @@
         }
       }
 
-      function handleSelect(select) {
-        const value = select.value;
-        if (value) {
-          location.assign(value);
-        }
-      }
-
       window.onload = function () {
+        const goldCard = document.getElementById("gold-card");
         const cards = document.querySelectorAll(".card");
         cards.forEach((card) => {
           card.setAttribute("data-original-transform", card.style.transform);
@@ -251,7 +213,38 @@
           card.setAttribute("data-original-left", card.style.left);
           card.setAttribute("data-original-background", card.style.background);
         });
+
+        // 메시지를 카드에 랜덤하게 적용 (중복 메시지 제거)
+        const urlParams = new URLSearchParams(window.location.search);
+        const messages = urlParams.get("message");
+        if (messages) {
+          console.log("운세 메시지: " + messages);
+          const messageArray = [...new Set(messages.split("\n"))];
+          const shuffledMessages = messageArray.sort(() => 0.5 - Math.random());
+          const cardMessages = document.querySelectorAll(".card-message");
+          cardMessages.forEach((element, index) => {
+            if (index < shuffledMessages.length) {
+              element.textContent = shuffledMessages[index];
+            } else {
+              element.textContent = "";
+            }
+          });
+          if (shuffledMessages.length === cardMessages.length) {
+            goldCard.style.display = "block";
+          }
+        }
       };
+      function goBackToCategories() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get("username");
+        if (username) {
+          location.assign(
+            `/webPage/categories.html?username=${encodeURIComponent(username)}`
+          );
+        } else {
+          location.assign("/webPage/categories.html");
+        }
+      }
     </script>
   </body>
 </html>

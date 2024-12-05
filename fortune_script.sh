@@ -241,40 +241,5 @@ developer_advice() {
     fi
 }
 
-weather_advice() {
-    echo "1. 0~10도"
-    echo "2. 10~20도"
-    echo "3. 20~30도"
-    echo "4. 돌아가기"
-    read weather_choice
-
-    case $weather_choice in
-        1)
-            advice=$(cat advice_files/temperature_0to10.txt | shuf -n 1)
-            ;;
-        2)
-            advice=$(cat advice_files/temperature_10to20.txt | shuf -n 1)
-            ;;
-        3)
-            advice=$(cat advice_files/temperature_20to30.txt | shuf -n 1)
-            ;;
-        4) advice_menu ;;
-        *) echo "잘못된 옵션입니다. 다시 시도해 주세요." ; weather_advice ;;
-    esac
-
-    weather_advice_message="$user_name 님의 오늘의 날씨 조언: $advice"
-    echo "$weather_advice_message"
-
-    # 메일로 보내기 여부 확인
-    echo "오늘의 날씨 조언을 메일로 받아보시겠습니까? (y/n)"
-    read send_email_choice
-
-    if [[ "$send_email_choice" == "y" || "$send_email_choice" == "Y" ]]; then
-        send_email
-    else
-        echo "날씨 조언을 종료합니다."
-    fi
-}
-
 # 메인 프로그램 실행
 main_menu
