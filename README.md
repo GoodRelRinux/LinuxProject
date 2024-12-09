@@ -6,16 +6,16 @@
 
 # live-server 설치 방법
 1. Node.js 설치
-\ncurl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-\nsudo apt install -y nodejs
-2. 설치 확인
-  node -v
-  npm -v
-3. Live Server 설치
-  npm install -g live-server
-4. Live Server 실행
-  cd today_fortune
-  live-server --host=0.0.0.0 --port=8080
+|| curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+|| sudo apt install -y nodejs
+3. 설치 확인
+|| node -v
+|| npm -v
+5. Live Server 설치
+|| npm install -g live-server
+6. Live Server 실행
+|| cd today_fortune
+|| live-server --host=0.0.0.0 --port=8080
 
 # 인바운드 규칙 설정하기
 <img width="1309" alt="스크린샷 2024-12-09 오후 7 58 04" src="https://github.com/user-attachments/assets/b4c38320-8a2d-445d-92e0-e334511ebffa">
