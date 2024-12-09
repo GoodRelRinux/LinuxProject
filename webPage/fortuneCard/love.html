@@ -9,7 +9,7 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        background: linear-gradient(to bottom, #ff1493, #ff69b4);
+        background: url("../image/bstar_fortunecard.png") no-repeat center/cover; /* 이미지 추가 */
         font-family: Arial, sans-serif;
         color: #fff;
         display: flex;
@@ -93,44 +93,27 @@
       }
 
       .gold-card {
-        background: linear-gradient(to right, #ffb6c1, #ff69b4);
+        background: url("../image/goldcard_1.png") no-repeat center/cover;
         border-radius: 15px;
         padding: 80px;
         margin-top: 40px;
         text-align: center;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-        max-width: 200px;
+        max-width: 300px;
         width: calc(100% - 40px);
+        height: 250px;
       }
 
       .gold-card h2 {
-        font-size: 24px;
-        color: #fff;
+        font-size: 32px;
+        color: #000000;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
       }
 
       .gold-card p {
-        font-size: 16px;
-        color: #fff;
+        font-size: 24px;
+        color: #000000;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-      }
-
-      .select-box {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #fff;
-        border-radius: 5px;
-        background: #000;
-        color: #fff;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-      }
-
-      .select-box option {
-        background: #000000;
-        color: #fff;
       }
 
       .inactive {
@@ -167,81 +150,32 @@
     <header>
       <h1>✨ 연애 운세 카드 ✨</h1>
     </header>
-
     <div class="cards-container">
       <div class="card" onclick="toggleCard(this)">
-        <h2>카드 1</h2>
         <p class="card-message"></p>
       </div>
       <div class="card" onclick="toggleCard(this)">
-        <h2>카드 2</h2>
         <p class="card-message"></p>
       </div>
       <div class="card" id="central-card" onclick="toggleCard(this)">
-        <h2>카드 3</h2>
         <p class="card-message"></p>
       </div>
       <div class="card" onclick="toggleCard(this)">
-        <h2>카드 4</h2>
         <p class="card-message"></p>
       </div>
       <div class="card" onclick="toggleCard(this)">
-        <h2>카드 5</h2>
         <p class="card-message"></p>
       </div>
     </div>
-
     <button class="back-button" onclick="goBackToCategories()">
       운세 선택으로 돌아가기
     </button>
 
-    <select class="select-box" onchange="handleSelect(this)">
-      <option value="" selected>연애</option>
-      <option value="developer.html">개발</option>
-      <option value="wealth.html">금전</option>
-      <option value="relationships.html">인간관계</option>
-      <option value="health.html">건강</option>
-    </select>
     <div class="gold-card" id="gold-card" style="display: none">
       <h2>🌟 Gold Card 🌟</h2>
       <p>당신은 모든 운세를 수집하셨습니다!</p>
     </div>
-
     <script>
-      function toggleCard(card) {
-        const allCards = document.querySelectorAll(".card");
-        allCards.forEach((c) => {
-          if (c !== card) {
-            c.classList.add("inactive");
-          }
-        });
-        card.classList.toggle("active");
-
-        if (card.classList.contains("active")) {
-          card.style.transform = "scale(2) translate(50%, 50%)";
-          card.style.top = "20%";
-          card.style.left = "-10%";
-          card.style.background =
-            "rgba(0, 0, 0, 1)"; /* 카드 크기가 커질 때 색상 변경 */
-        } else {
-          card.style.transform = card.getAttribute("data-original-transform");
-          card.style.top = card.getAttribute("data-original-top");
-          card.style.left = card.getAttribute("data-original-left");
-          card.style.background = "rgba(255, 255, 255, 0.3)";
-        }
-
-        if (!card.classList.contains("active")) {
-          allCards.forEach((c) => c.classList.remove("inactive"));
-        }
-      }
-
-      function handleSelect(select) {
-        const value = select.value;
-        if (value) {
-          location.assign(value);
-        }
-      }
-
       window.onload = function () {
         const goldCard = document.getElementById("gold-card");
         const cards = document.querySelectorAll(".card");
@@ -252,26 +186,87 @@
           card.setAttribute("data-original-background", card.style.background);
         });
 
-        // 메시지를 카드에 랜덤하게 적용 (중복 메시지 제거)
         const urlParams = new URLSearchParams(window.location.search);
         const messages = urlParams.get("message");
         if (messages) {
-          console.log("운세 메시지: " + messages);
-          const messageArray = [...new Set(messages.split("\n"))]; // 중복 제거
+          const messageArray = [...new Set(messages.split("\n"))];
           const shuffledMessages = messageArray.sort(() => 0.5 - Math.random());
           const cardMessages = document.querySelectorAll(".card-message");
           cardMessages.forEach((element, index) => {
             if (index < shuffledMessages.length) {
               element.textContent = shuffledMessages[index];
             } else {
+              const card = element.closest(".card");
+              card.style.background = `url('../image/red.jpg') center center / cover no-repeat`;
               element.textContent = "";
+
+              // 'red.jpg'가 배경인 카드에는 클릭을 비활성화
+              card.style.pointerEvents = "none";
             }
           });
           if (shuffledMessages.length === cardMessages.length) {
             goldCard.style.display = "block";
           }
+        } else {
+          cards.forEach((card) => {
+            card.style.background = `url('../image/red.jpg') center center / cover no-repeat`;
+            card.querySelector(".card-message").textContent = "";
+            card.style.pointerEvents = "none"; // 'red.jpg'가 배경인 카드에는 클릭을 비활성화
+          });
         }
       };
+      function toggleCard(card) {
+        const allCards = document.querySelectorAll(".card");
+        const isActive = card.classList.contains("active");
+        const container = document.querySelector(".cards-container");
+        const containerWidth = container.offsetWidth;
+        const containerHeight = container.offsetHeight;
+
+        if (!isActive) {
+          // 다른 카드 비활성화
+          allCards.forEach((c) => {
+            if (c !== card) {
+              c.classList.add("inactive");
+            }
+          });
+
+          // 선택된 카드 가운데로 이동
+          const cardRect = card.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          const centerX =
+            containerRect.left + containerWidth / 2 - cardRect.width / 2;
+          const centerY =
+            containerRect.top + containerHeight / 2 - cardRect.height / 2;
+
+          card.classList.add("active");
+          card.style.transition =
+            "transform 0.3s ease, top 0.3s ease, left 0.3s ease, z-index 0.3s ease, background-color 0.3s ease";
+          card.style.zIndex = "10";
+          card.style.transform = "scale(2) translate(50%, 50%)";
+          card.style.top = "20%";
+          card.style.left = "-10%";
+
+          // 배경색 진하게 변경
+          card.style.backgroundColor = "rgba(0, 0, 0, 1)";
+        } else {
+          // 선택된 카드 원래 상태로 복원
+          card.classList.remove("active");
+          card.style.transform = card.getAttribute("data-original-transform");
+          card.style.top = card.getAttribute("data-original-top");
+          card.style.left = card.getAttribute("data-original-left");
+          card.style.zIndex = "1";
+          card.style.position = "absolute";
+
+          // 배경색 원래 상태로 복원
+          card.style.backgroundColor = card.getAttribute(
+            "data-original-background"
+          );
+
+          // 다른 카드 다시 활성화
+          allCards.forEach((c) => c.classList.remove("inactive"));
+        }
+      }
+
       function goBackToCategories() {
         const urlParams = new URLSearchParams(window.location.search);
         const username = urlParams.get("username");

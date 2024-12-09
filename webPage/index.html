@@ -6,50 +6,107 @@
     <title>오늘의 운세</title>
     <style>
       body {
-        background-color: #3e0177;
-        color: white;
-        font-family: Arial, sans-serif;
+        margin: 0;
+        height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        margin: 0;
+        background: linear-gradient(to bottom, #210a38, #6a0dad);
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        overflow: hidden;
       }
+      .stars {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+      }
+      .stars::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("image/bstar.png") repeat;
+        animation: twinkling 20s infinite;
+        opacity: 0.8;
+      }
+
+      @keyframes twinkling {
+        0% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(-50px, 50px);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+
       .container {
+        z-index: 1;
         text-align: center;
-        background-color: #2a014e;
-        padding: 20px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 30px 40px;
         border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       }
+
       .container h1 {
-        font-size: 2em;
-        margin-bottom: 10px;
+        font-size: 28px;
+        color: #ffd700;
+        text-shadow: 0 0 0.625rem rgba(255, 215, 0, 0.5);
+        margin-bottom: 20px;
       }
+
+      .container p {
+        font-size: 16px;
+        color: #f1f1f1;
+        margin-bottom: 20px;
+      }
+
       .container input[type="text"] {
+        width: 100%;
         padding: 10px;
-        width: 80%;
-        margin-bottom: 15px;
+        font-size: 16px;
         border: none;
         border-radius: 5px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
+
       .container button {
-        padding: 10px 20px;
+        padding: 12px 20px;
+        font-size: 16px;
+        color: #fff;
+        background: linear-gradient(to bottom, #1e3b70, #1e1e3a);
         border: none;
-        background-color: #ff9900;
-        color: white;
-        font-size: 1em;
         border-radius: 5px;
         cursor: pointer;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s;
       }
+
       .container button:hover {
-        background-color: #e68a00;
+        transform: translateY(-3px);
+        background: linear-gradient(to bottom, #27496d, #1e1e3a);
+      }
+
+      .container button:active {
+        transform: translateY(0);
+        box-shadow: none;
       }
     </style>
   </head>
   <body>
+    <div class="stars"></div> <!-- 반짝이는 별 효과 -->
     <div class="container">
-      <h1>오늘의 운세</h1>
+      <h1>🍀 오늘의 운세 🍀</h1>
       <p>운세를 확인하려면 이름을 입력해주세요.</p>
       <input type="text" id="username" placeholder="이름 입력" />
       <br />
@@ -60,7 +117,6 @@
       function checkFortune() {
         const username = document.getElementById("username").value;
         if (username) {
-          // 페이지 이동 시 사용자 이름 전달
           window.location.href =
             "categories.html?username=" + encodeURIComponent(username);
         } else {
