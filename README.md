@@ -6,8 +6,8 @@
 
 # live-server 설치 방법
 1. Node.js 설치
-  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-  sudo apt install -y nodejs
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
 2. 설치 확인
   node -v
   npm -v
