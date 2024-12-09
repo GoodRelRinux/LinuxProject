@@ -6,52 +6,92 @@
     <title>운세 컨텐츠</title>
     <style>
       body {
-        background-color: #3e0177;
-        color: white;
-        font-family: Arial, sans-serif;
+        margin: 0;
+        height: 100vh;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        margin: 0;
+        background: linear-gradient(to bottom, #210a38, #6a0dad);
+        font-family: Arial, sans-serif;
+        color: #fff;
+        overflow: hidden;
       }
-      .container {
+
+      h1 {
+        font-size: 28px;
+        color: #f1f1f1;
+        margin-bottom: 30px;
+        z-index: 1;
         text-align: center;
-        background-color: #2a014e;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
       }
-      .container h1 {
-        font-size: 1.8em;
-        margin-bottom: 20px;
+
+      .button-group {
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 80%;
+        max-width: 600px;
+        z-index: 1;
       }
-      .container button {
-        padding: 10px 20px;
-        margin: 5px;
+
+      .fortune-button {
+        padding: 15px 25px;
+        font-size: 16px;
         border: none;
-        background-color: #0066cc;
-        color: white;
-        font-size: 1em;
         border-radius: 5px;
         cursor: pointer;
+        color: #fff;
+        background: linear-gradient(to bottom, #1e3b70, #1e1e3a);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s;
+        text-align: center;
       }
-      .container button:hover {
-        background-color: #005bb5;
+
+      .fortune-button:hover {
+        transform: translateY(-3px);
+        background: linear-gradient(to bottom, #27496d, #1e1e3a);
+      }
+
+      .fortune-button:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+      .stars {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .stars::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("image/bstar.png") repeat;
+        animation: twinkling 20s infinite;
+        opacity: 0.8;
+      }
+
+      @keyframes twinkling {
+        0% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(-50px, 50px);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
       }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>보고싶은 운세를 선택해주세요.</h1>
-      <button onclick="selectCategory('연애')">연애</button>
-      <button onclick="selectCategory('개발')">개발</button>
-      <button onclick="selectCategory('금전')">금전</button>
-      <button onclick="selectCategory('인간관계')">인간관계</button>
-      <button onclick="selectCategory('건강')">건강</button>
-      <button onclick="selectCategory('별자리')">별자리</button>
-    </div>
-
     <script>
       let username;
 
@@ -65,14 +105,12 @@
 
       async function selectCategory(category) {
         if (username) {
-          // 카테고리 이름을 영어로 매핑
           const categoryMap = {
             연애: "love",
             개발: "developer",
             금전: "wealth",
             인간관계: "relationships",
             건강: "health",
-            별자리: "zodiac",
           };
 
           const categoryInEnglish = categoryMap[category];
@@ -84,19 +122,13 @@
               throw new Error("파일을 찾을 수 없습니다.");
             }
             const data = await response.json();
-            console.log(data); // 로그 내용을 콘솔에 출력
-
-            // 모든 메시지를 하나의 문자열로 합쳐서 다음 페이지로 전달
             const allMessages = data.map((item) => item.message).join("\n");
 
-            // 카테고리에 따라 다른 페이지로 이동하며 필요한 정보 전달
             let nextPage;
             if (categoryInEnglish === "love") {
               nextPage = "fortuneCard/love.html";
             } else if (categoryInEnglish === "developer") {
               nextPage = "fortuneCard/developer.html";
-            } else if (categoryInEnglish === "zodiac") {
-              nextPage = "fortuneCard/zodiac.html";
             } else if (categoryInEnglish === "wealth") {
               nextPage = "fortuneCard/wealth.html";
             } else if (categoryInEnglish === "health") {
@@ -119,5 +151,17 @@
         }
       }
     </script>
+  </head>
+  <body>
+    <div class="stars"></div>
+
+    <h1>보고싶은 운세를 선택해주세요.</h1>
+    <div class="button-group">
+      <button class="fortune-button" onclick="selectCategory('연애')">연애</button>
+      <button class="fortune-button" onclick="selectCategory('개발')">개발</button>
+      <button class="fortune-button" onclick="selectCategory('금전')">금전</button>
+      <button class="fortune-button" onclick="selectCategory('인간관계')">인간관계</button>
+      <button class="fortune-button" onclick="selectCategory('건강')">건강</button>
+    </div>
   </body>
 </html>

@@ -6,7 +6,7 @@ echo "이름을 입력해 주세요:"
 read user_name
 
 # 로그 디렉터리 생성
-mkdir -p logs_json
+mkdir -p logs
 
 # 메일 관련 설정
 send_email() {
@@ -118,7 +118,7 @@ fortune_menu() {
 log_fortune_to_json() {
     category=$1
     fortune=$2
-    log_file="logs_json/${user_name}_${category}_log.json"
+    log_file="logs/${user_name}_${category}_log.json"
 
     # JSON 형식으로 날짜와 운세 내용 저장
     json_entry=$(jq -n --arg date "$(date)" --arg category "$category" --arg message "$fortune" \
