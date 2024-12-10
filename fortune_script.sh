@@ -5,8 +5,24 @@ echo "Today's Fortune 프로그램에 오신 것을 환영합니다!"
 echo "이름을 입력해 주세요:"
 read user_name
 
+# API 키 설정
+API_KEY="NNxXBNxj4LHS%2B9shi%2BFDKWgAfIvjpQQgMc7HeJ5GkGG7LdTkhlWYzs1AQUqiPvakK06rkD7yaU2PyArJwuO7Ug%3D%3D"
+
 # 로그 디렉터리 생성
 mkdir -p logs
+
+# 스크립트 경로 설정
+script_dir=$(dirname "$0")
+fortune_file_path="$script_dir/fortune_files"
+advice_file_path="$script_dir/advice_files"
+location_file="$script_dir/locations.txt"
+
+# 좌표 검색
+get_coordinates() {
+    location_name=$1
+    coordinates=$(grep "^$location_name " "$location_file" | awk '{print $2, $3}')
+    echo "$coordinates"
+}
 
 # 메일 관련 설정
 send_email() {
@@ -65,31 +81,31 @@ fortune_menu() {
 
     case $fortune_choice in
         1)
-            fortune=$(cat fortune_files/love.txt | shuf -n 1)
+            fortune=$(cat "$fortune_file_path/love.txt" | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 연애 운세를 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
             log_fortune_to_json "love" "$fortune"
             ;;
         2)
-            fortune=$(cat fortune_files/developer.txt | shuf -n 1)
+            fortune=$(cat "$fortune_file_path/developer.txt" | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 개발 운세를 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
             log_fortune_to_json "developer" "$fortune"
             ;;
         3)
-            fortune=$(cat fortune_files/wealth.txt | shuf -n 1)
+            fortune=$(cat "$fortune_file_path/wealth.txt" | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 금전운을 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
             log_fortune_to_json "wealth" "$fortune"
             ;;
         4)
-            fortune=$(cat fortune_files/relationships.txt | shuf -n 1)
+            fortune=$(cat "$fortune_file_path/relationships.txt" | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 인간관계 운세를 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
             log_fortune_to_json "relationships" "$fortune"
             ;;
         5)
-            fortune=$(cat fortune_files/health.txt | shuf -n 1)
+            fortune=$(cat "$fortune_file_path/health.txt" | shuf -n 1)
             fortune_message="$user_name 님, 오늘의 건강 운세를 알려드릴게요!\n$fortune"
             echo -e "$fortune_message"
             log_fortune_to_json "health" "$fortune"
@@ -229,7 +245,6 @@ developer_advice() {
         advice_message="$user_name 님, 오늘의 개발 조언: $content"
         echo "$advice_message"
 
-        # 메일로 보내기 여부 확인
         echo "오늘의 조언을 메일로 받아보시겠습니까? (y/n)"
         read send_email_choice
 
@@ -239,6 +254,74 @@ developer_advice() {
             echo "조언을 종료합니다."
         fi
     fi
+}
+
+# 날씨 함수 
+weather_advice() {
+    echo "현재 위치를 입력해 주세요 (예: 서울):"
+    read location
+
+    # 좌표 가져오기
+    coordinates=$(get_coordinates "$location")
+    if [[ -z "$coordinates" ]]; then
+        echo "입력한 위치에 대한 데이터를 찾을 수 없습니다."
+        return
+    fi
+
+    nx=$(echo "$coordinates" | awk '{print $1}')
+    ny=$(echo "$coordinates" | awk '{print $2}')
+
+    echo ""
+
+    # API 호출
+    today=$(date +"%Y%m%d")
+    base_time=$(calculate_base_time)
+
+    response=$(curl -s "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${API_KEY}&numOfRows=10&pageNo=1&dataType=JSON&base_date=${today}&base_time=${base_time}&nx=${nx}&ny=${ny}")
+
+    # JSON 유효성 검사
+    if ! echo "$response" | jq empty > /dev/null 2>&1; then
+        echo "API 응답이 유효하지 않습니다."
+        echo "API 응답: $response"
+        return
+    fi
+
+    # 데이터 추출
+    temperature=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="TMP") | .fcstValue')
+    sky=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="SKY") | .fcstValue')
+    precipitation=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="PTY") | .fcstValue')
+
+    if [[ -z "$temperature" ]]; then
+        echo "온도 데이터를 찾을 수 없습니다."
+        return
+    fi
+
+    case $sky in
+        1) sky_status="맑음" ;;
+        3) sky_status="구름 많음" ;;
+        4) sky_status="흐림" ;;
+        *) sky_status="알 수 없음" ;;
+    esac
+
+    case $precipitation in
+        0) precipitation_status="강수 없음" ;;
+        1) precipitation_status="비" ;;
+        2) precipitation_status="비/눈" ;;
+        3) precipitation_status="눈" ;;
+        *) precipitation_status="알 수 없음" ;;
+    esac
+
+    echo "현재 ${location}의 날씨 정보를 알려드릴게요!"
+    echo "- 기온: ${temperature}°C"
+    echo "- 하늘 상태: ${sky_status}"
+    echo "- 강수 상태: ${precipitation_status}"
+}
+
+
+# 기준 시간 계산 함수
+calculate_base_time() {
+    current_hour=$(date +"%H")
+    if (( current_hour < 2 )); then echo "2300"; else echo "0500"; fi
 }
 
 # 메인 프로그램 실행
