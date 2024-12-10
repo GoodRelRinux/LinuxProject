@@ -181,7 +181,7 @@ zodiac_fortune() {
         zodiac_sign="물고기자리"
     fi
 
-    zodiac_file="fortune_files/zodiac/${zodiac_sign}.txt"
+    zodiac_file="fortune_files/zodiac.txt"
 
     if [[ -f "$zodiac_file" ]]; then
         fortune=$(cat "$zodiac_file" | shuf -n 1)
