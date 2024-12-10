@@ -256,7 +256,7 @@ developer_advice() {
     fi
 }
 
-# 날씨 조언
+# 날씨 함수 
 weather_advice() {
     echo "현재 위치를 입력해 주세요 (예: 서울):"
     read location
@@ -271,26 +271,50 @@ weather_advice() {
     nx=$(echo "$coordinates" | awk '{print $1}')
     ny=$(echo "$coordinates" | awk '{print $2}')
 
+    echo ""
+
     # API 호출
     today=$(date +"%Y%m%d")
     base_time=$(calculate_base_time)
 
     response=$(curl -s "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${API_KEY}&numOfRows=10&pageNo=1&dataType=JSON&base_date=${today}&base_time=${base_time}&nx=${nx}&ny=${ny}")
 
+    # JSON 유효성 검사
     if ! echo "$response" | jq empty > /dev/null 2>&1; then
         echo "API 응답이 유효하지 않습니다."
         echo "API 응답: $response"
         return
     fi
 
+    # 데이터 추출
     temperature=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="TMP") | .fcstValue')
+    sky=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="SKY") | .fcstValue')
+    precipitation=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="PTY") | .fcstValue')
 
     if [[ -z "$temperature" ]]; then
         echo "온도 데이터를 찾을 수 없습니다."
         return
     fi
 
-    echo "현재 ${location}의 기온은 ${temperature}°C 입니다. "
+    case $sky in
+        1) sky_status="맑음" ;;
+        3) sky_status="구름 많음" ;;
+        4) sky_status="흐림" ;;
+        *) sky_status="알 수 없음" ;;
+    esac
+
+    case $precipitation in
+        0) precipitation_status="강수 없음" ;;
+        1) precipitation_status="비" ;;
+        2) precipitation_status="비/눈" ;;
+        3) precipitation_status="눈" ;;
+        *) precipitation_status="알 수 없음" ;;
+    esac
+
+    echo "현재 ${location}의 날씨 정보를 알려드릴게요!"
+    echo "- 기온: ${temperature}°C"
+    echo "- 하늘 상태: ${sky_status}"
+    echo "- 강수 상태: ${precipitation_status}"
 }
 
 
