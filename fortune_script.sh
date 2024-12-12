@@ -256,12 +256,12 @@ developer_advice() {
     fi
 }
 
-# 날씨 함수 
+
+#날씨 조언
 weather_advice() {
     echo "현재 위치를 입력해 주세요 (예: 서울):"
     read location
 
-    # 좌표 가져오기
     coordinates=$(get_coordinates "$location")
     if [[ -z "$coordinates" ]]; then
         echo "입력한 위치에 대한 데이터를 찾을 수 없습니다."
@@ -273,20 +273,17 @@ weather_advice() {
 
     echo ""
 
-    # API 호출
     today=$(date +"%Y%m%d")
     base_time=$(calculate_base_time)
 
     response=$(curl -s "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${API_KEY}&numOfRows=10&pageNo=1&dataType=JSON&base_date=${today}&base_time=${base_time}&nx=${nx}&ny=${ny}")
 
-    # JSON 유효성 검사
     if ! echo "$response" | jq empty > /dev/null 2>&1; then
         echo "API 응답이 유효하지 않습니다."
         echo "API 응답: $response"
         return
     fi
 
-    # 데이터 추출
     temperature=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="TMP") | .fcstValue')
     sky=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="SKY") | .fcstValue')
     precipitation=$(echo "$response" | jq -r '.response.body.items.item[] | select(.category=="PTY") | .fcstValue')
@@ -311,10 +308,30 @@ weather_advice() {
         *) precipitation_status="알 수 없음" ;;
     esac
 
-    echo "현재 ${location}의 날씨 정보를 알려드릴게요!"
+    echo "현재 ${location}의 날씨 정보:"
     echo "- 기온: ${temperature}°C"
     echo "- 하늘 상태: ${sky_status}"
     echo "- 강수 상태: ${precipitation_status}"
+
+    advice_file=""
+    if (( $(echo "$temperature < -5" | bc -l) )); then
+        advice_file="$advice_file_path/temperature_~-5.txt"
+    elif (( $(echo "$temperature >= -5 && $temperature < 0" | bc -l) )); then
+        advice_file="$advice_file_path/temperature_-5~0.txt"
+    elif (( $(echo "$temperature >= 0 && $temperature < 5" | bc -l) )); then
+        advice_file="$advice_file_path/temperature_0~5.txt"
+    elif (( $(echo "$temperature >= 5 && $temperature < 10" | bc -l) )); then
+        advice_file="$advice_file_path/temperature_5~10.txt"
+    else
+        advice_file="$advice_file_path/temperature_10~.txt"
+    fi
+
+    if [[ -f "$advice_file" ]]; then
+        advice=$(shuf -n 1 "$advice_file")
+        echo "오늘의 날씨에 딱 맞는 조언이 될 거에요!: $advice"
+    else
+        echo "조언 파일을 찾을 수 없습니다. 관리자에게 문의하세요."
+    fi
 }
 
 
